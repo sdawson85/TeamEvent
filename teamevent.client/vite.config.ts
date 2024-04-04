@@ -36,7 +36,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
     env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7019';
-
+const tenantId = "tenant1";
 // https://vitejs.dev/config/
 export default defineConfig({
     plugins: [plugin()],
@@ -52,7 +52,7 @@ export default defineConfig({
                 secure: false,
                 changeOrigin: true,
                 headers: {
-                    'X-Tenant-ID': 'tenant1', // Directly add custom header here
+                    'X-Tenant-ID': tenantId, // Directly add custom header here
                 },
             },
             '^/TeamEvent/AddEvent': {
@@ -60,7 +60,7 @@ export default defineConfig({
                 secure: false,
                 changeOrigin: true,
                 headers: {
-                    'X-Tenant-ID': 'tenant1', // Directly add custom header here
+                    'X-Tenant-ID': tenantId, // Directly add custom header here
                 },
             },
         },
