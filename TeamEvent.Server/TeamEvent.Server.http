@@ -1,0 +1,24 @@
+@TeamEvent.Server_HostAddress = http://localhost:5175
+
+GET {{TeamEvent.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+POST {{TeamEvent.Server_HostAddress}}/TeamEvent/AddEvent
+X-Tenant-ID: tenant1
+Content-Type: application/json
+{
+    "EventName": "Concert2",
+    "Venue": "Stadium",
+    "CreatedBy": "Admin",
+    "StartAt": "2025-04-10T19:00:00",
+    "EndAt": "2025-04-10T22:00:00",
+    "Attenders": ["John", "Jane", "Doe"],
+    "TenantId":""
+ }
+###
+
+GET {{TeamEvent.Server_HostAddress}}/TeamEvent/Index
+X-Tenant-ID: tenant1
+
+###
