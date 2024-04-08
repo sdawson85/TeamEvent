@@ -9,13 +9,10 @@ namespace TeamEvent.Server.Persistence;
 
 public class EventRepository(ApplicationDbContext context) : IEventRepository
 {
-    private readonly ApplicationDbContext _context = context;
     /// <inheritdoc />
     public async Task<bool> AddEventAsync(EventDto request)
     {
-
-        var teamEventSet = _context.Set<Domain.TeamEvent>();
-        
+        var teamEventSet = context.Set<Domain.TeamEvent>();
 
         var newEvent = new Domain.TeamEvent(
             request.EventName,
@@ -25,10 +22,9 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
             request.CreatedBy,
             request.TenantId
         );
-
         
         await teamEventSet.AddAsync(newEvent);
-        await _context.SaveChangesAsync(); 
+        await context.SaveChangesAsync(); 
 
         await AddAttenders(request, newEvent);
 
@@ -38,7 +34,7 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
     /// <inheritdoc />
     public async Task<List<EventSummaryDto>> GetEventsByTenantIdAsync(string tenantId)
     {
-        var events = await _context
+        var events = await context
             .TeamEvents
             .Where(w => w.TenantId == tenantId)
             .Include(x=>x.Attenders)
@@ -52,12 +48,12 @@ public class EventRepository(ApplicationDbContext context) : IEventRepository
 
     private async Task AddAttenders(EventDto request, Domain.TeamEvent newEvent)
     {
-        var attendersSet = _context.Set<Attenders>();
+        var attendersSet = context.Set<Attenders>();
         var attenders = request.Attenders
             .Select(a => new Attenders(a, newEvent.Id))
             .ToList();
 
         await attendersSet.AddRangeAsync(attenders);
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 }

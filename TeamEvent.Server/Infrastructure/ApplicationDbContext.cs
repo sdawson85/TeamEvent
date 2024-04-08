@@ -8,6 +8,7 @@ namespace TeamEvent.Server.Infrastructure;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
     public DbSet<Domain.TeamEvent> TeamEvents => Set<Domain.TeamEvent>();
+    
     public DbSet<Attenders> Attenders => Set<Attenders>();
 
     /// <inheritdoc />
@@ -32,6 +33,6 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
 
         optionsBuilder.UseSqlServer(connectionString);
 
-        return new ApplicationDbContext(optionsBuilder.Options); // Pass null for mediator
+        return new ApplicationDbContext(optionsBuilder.Options);
     }
 }

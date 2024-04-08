@@ -1,54 +1,46 @@
-
 using Microsoft.EntityFrameworkCore;
 using TeamEvent.Server.Infrastructure;
 using TeamEvent.Server.Persistence;
 using TeamEvent.Server.Persistence.Interfaces;
 
-namespace TeamEvent.Server
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
 {
-    public class Program
+    options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        policy.WithOrigins("https://teamevents21.netlify.app", "https://localhost:63698")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
-            // Add services to the container.
+builder.Services.AddControllers();
 
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+builder.Services.AddOpenApi();
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
-            });
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+});
 
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IFakeEmailSender, FakeEmailSender>();
+builder.Services.AddScoped<IEventService, EventService>();
 
-            builder.Services.AddScoped<IEventRepository, EventRepository>();
-            builder.Services.AddScoped<IFakeEmailSender, FakeEmailSender>();
-            builder.Services.AddScoped<IEventService, EventService>();
+var app = builder.Build();
 
-            var app = builder.Build();
+app.UseDefaultFiles();
+app.MapStaticAssets();
 
-            app.UseDefaultFiles();
-            app.MapStaticAssets();
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
+app.UseHttpsRedirection();
 
-            app.UseHttpsRedirection();
+app.UseAuthorization();
 
-            app.UseAuthorization();
+app.UseCors("AllowSpecificOrigin");
 
+app.MapControllers();
 
-            app.MapControllers();
-
-            app.MapFallbackToFile("/index.html");
-
-            app.Run();
-        }
-    }
-}
+app.Run();

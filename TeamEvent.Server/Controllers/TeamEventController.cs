@@ -8,8 +8,6 @@ namespace TeamEvent.Server.Controllers;
 [Route("[controller]")]
 public class TeamEventController(IEventService eventService) : ControllerBase
 {
-    private readonly IEventService _eventService = eventService;
-
     [HttpGet("Index")]
     public async Task<IActionResult> Index()
     {
@@ -17,9 +15,10 @@ public class TeamEventController(IEventService eventService) : ControllerBase
         {
             return BadRequest("Missing X-Tenant-ID header");
         }
-        var events = await _eventService.GetEventsByTenantIdAsync(tenantId);
+        var events = await eventService.GetEventsByTenantIdAsync(tenantId);
         return Ok(events);
     }
+    
     [HttpPost("AddEvent")]
     public async Task<IActionResult> AddEvent([FromBody] EventDto request)
     {
@@ -29,7 +28,7 @@ public class TeamEventController(IEventService eventService) : ControllerBase
         }
 
         request = request with { TenantId = tenantId };
-        var success = await _eventService.SaveTeamEventAsync(request);
+        var success = await eventService.SaveTeamEventAsync(request);
         return success ? Ok() : StatusCode(500);
     }
 }

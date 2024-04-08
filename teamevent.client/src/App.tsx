@@ -8,7 +8,6 @@ import { Event } from './models/event';
 const App: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
 
-  // Function to load events
   const loadEvents = async () => {
     try {
       const data = await getEvents(); 
@@ -18,7 +17,6 @@ const App: React.FC = () => {
      
     }
   };
-
   
   useEffect(() => {
     loadEvents(); 
