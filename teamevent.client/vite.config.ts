@@ -34,8 +34,13 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
     }
 }
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7019';
+const target = env.NODE_ENV === 'production' || !env.ASPNETCORE_HTTPS_PORT
+    ? 'https://te-webapp-cca.azurewebsites.net'
+    : env.ASPNETCORE_HTTPS_PORT 
+        ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}`
+        : env.ASPNETCORE_URLS 
+            ? env.ASPNETCORE_URLS.split(';')[0] 
+            : 'https://localhost:7019';
 const tenantId = "tenant1";
 // https://vitejs.dev/config/
 export default defineConfig({
