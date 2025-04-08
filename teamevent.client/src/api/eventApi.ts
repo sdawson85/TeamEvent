@@ -8,12 +8,10 @@ import {
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 export const getEvents = async (): Promise<Event[]> => {
-  const tenantId = getTenantId();
-
+  let tenantId = getTenantId();
   if (!tenantId) {
-    throw new Error(
-      "Missing tenantId. Please ensure the user is properly authenticated."
-    );
+    tenantId = generateTenantIdFromBrowser();
+    saveTenantId(tenantId);
   }
 
   const response = await fetch(`${API_BASE}/TeamEvent/Index`, {
